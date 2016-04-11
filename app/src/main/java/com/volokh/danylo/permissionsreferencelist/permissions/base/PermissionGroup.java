@@ -24,6 +24,10 @@ public abstract class PermissionGroup {
     public abstract String getPermissionGroupName();
 
     /**
+     *
+     * This method returns a list of models for
+     * {@link com.volokh.danylo.permissionsreferencelist.adapter.PermissionsReferenceAdapter}
+     *
      * The order is following:
      *
      *  _______________________
@@ -31,7 +35,7 @@ public abstract class PermissionGroup {
      * | Permission Group Name |
      * |_______________________|__
      *   |                        |
-     *   | Permission Name        |
+     *   | Needed Permission Name |
      *   |________________________|__
      *      |                        |
      *      |  Method that needs it  |
@@ -40,7 +44,7 @@ public abstract class PermissionGroup {
      *      |  Method that needs it  |
      *    __|________________________|
      *   |                        |
-     *   | Permission Name        |
+     *   | Needed Permission Name |
      *   |________________________|__
      *      |                        |
      *      |  Method that needs it  |

@@ -33,26 +33,26 @@ public abstract class MethodDemonstrator extends MethodItem {
         mDemonstratorCallback = demonstratorCallback;
     }
 
-    public abstract void callDangerousMethod() throws SecurityException;
+    public abstract boolean callDangerousMethod() throws SecurityException;
 
     public void setPermissionName(String permissionName) {
         mPermission = permissionName;
     }
 
     protected Context context() {
-        return mDemonstratorCallback.activity();
+        return callback().activity();
     }
 
     @Override
     public void demonstrate() {
         Log.v(TAG, ">> demonstrate, mPermission[" + mPermission + "]");
 
-        int permissionCheck = ContextCompat.checkSelfPermission(mDemonstratorCallback.activity(),
+        int permissionCheck = ContextCompat.checkSelfPermission(callback().activity(),
                 mPermission);
 
-        Log.v(TAG, "demonstrate, shouldCrash " + mDemonstratorCallback.shouldCrash());
+        Log.v(TAG, "demonstrate, shouldCrash " + callback().shouldCrash());
 
-        if (mDemonstratorCallback.shouldCrash()) {
+        if (callback().shouldCrash()) {
 
             demonstrateCrash(permissionCheck);
 
@@ -69,24 +69,27 @@ public abstract class MethodDemonstrator extends MethodItem {
         switch (permissionCheck) {
             case PackageManager.PERMISSION_GRANTED:
                 Log.v(TAG, "demonstrate, PackageManager.PERMISSION_GRANTED");
-                callDangerousMethod();
-                mDemonstratorCallback.showToast("Method " + getClass().getSimpleName() + " called successfully");
+                boolean successful = callDangerousMethod();
+
+                if(successful){
+                    callback().showToast("Method " + getClass().getSimpleName() + " called successfully");
+                }
 
                 break;
             case PackageManager.PERMISSION_DENIED:
                 Log.v(TAG, "demonstrate, PackageManager.PERMISSION_DENIED");
                 // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(mDemonstratorCallback.activity(),
+                if (ActivityCompat.shouldShowRequestPermissionRationale(callback().activity(),
                         Manifest.permission.READ_CONTACTS)) {
 
-                    mDemonstratorCallback.showToast("Could you please give us the permission ? :)");
+                    callback().showToast("Could you please give us the permission ? :)");
 
                     // Show an explanation to the user *asynchronously* -- don't block
                     // this thread waiting for the user's response! After the user
                     // sees the explanation, try again to request the permission.
                     Log.v(TAG, "demonstrate, requestPermissions, mPermission[" + mPermission + "]");
 
-                    mDemonstratorCallback.requestPermissions(mPermission);
+                    callback().requestPermissions(mPermission);
 
                 } else {
                     Log.v(TAG, "demonstrate, No explanation needed, we can request the permission, mPermission[" + mPermission + "]");
@@ -94,11 +97,15 @@ public abstract class MethodDemonstrator extends MethodItem {
 
                     // No explanation needed, we can request the permission.
 
-                    mDemonstratorCallback.requestPermissions(mPermission);
+                    callback().requestPermissions(mPermission);
                 }
 
                 break;
         }
+    }
+
+    protected DemonstratorCallback callback() {
+        return mDemonstratorCallback;
     }
 
     private void demonstrateCrash(int permissionCheck) {
@@ -107,7 +114,7 @@ public abstract class MethodDemonstrator extends MethodItem {
             case PackageManager.PERMISSION_GRANTED:
                 Log.v(TAG, "demonstrateCrash, PackageManager.PERMISSION_GRANTED");
 
-                mDemonstratorCallback.showToast(
+                callback().showToast(
                         "Sorry, I cannot crash. " +
                                 "Permission is already granted.");
                 break;
@@ -120,7 +127,7 @@ public abstract class MethodDemonstrator extends MethodItem {
 
                 } catch (SecurityException e) {
                     Log.e(TAG, "Application Crashed", e);
-                    mDemonstratorCallback.showToast(
+                    callback().showToast(
                             "Application Crashed. " +
                                     "See LogCat for details");
                 }

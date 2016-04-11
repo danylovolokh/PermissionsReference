@@ -6,6 +6,6 @@
     android:padding="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/holo_blue_bright"
+    android:background="@drawable/method_background"
     android:layout_marginLeft="@dimen/method_item_left_margin"
     tools:text="Sample"/>

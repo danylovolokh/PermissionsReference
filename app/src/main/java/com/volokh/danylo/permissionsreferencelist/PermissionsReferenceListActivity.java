@@ -3,6 +3,7 @@ package com.volokh.danylo.permissionsreferencelist;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.os.PersistableBundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,11 @@ import android.widget.Toast;
 import com.volokh.danylo.permissionsreferencelist.adapter.permission_items.PermissionListItem;
 import com.volokh.danylo.permissionsreferencelist.adapter.PermissionsReferenceAdapter;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.MethodDemonstrator;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.ScrapHeap;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_applyBatch;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_insert;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_query;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_update;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.Permission;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.PermissionGroup;
 import com.volokh.danylo.permissionsreferencelist.permissions.dangerous.DangerousPermissionGroup;
@@ -31,19 +36,27 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
     private static final int REQUEST_CODE = 1;
     private static final String TAG = PermissionsReferenceListActivity.class.getSimpleName();
 
-
     private RecyclerView mRecyclerView;
     private PermissionsReferenceAdapter mAdapter;
 
     PermissionGroup CALENDAR = new DangerousPermissionGroup(Manifest.permission_group.CALENDAR,
+            new Permission(Manifest.permission.WRITE_CALENDAR),
             new Permission(Manifest.permission.READ_CALENDAR,
 
                     new Calendar_ContentResolver_query(
-                            "ContentResolver#query(Uri, String[], String, String[] selectionArgs, String)",
+                            "ContentResolver#query(Uri, String[], String, String[], String)",
+                            this),
+                    new Calendar_ContentResolver_insert(
+                            "ContentResolver#insert(Uri url, ContentValues",
+                            this),
+                    new Calendar_ContentResolver_update(
+                            "ContentResolver#update(Uri, ContentValues, String, String[])",
+                            this),
+                    new Calendar_ContentResolver_applyBatch(
+                            "ContentResolver#applyBatch(String, ArrayList<ContentProviderOperation>)",
                             this)
-            ),
-            new Permission(Manifest.permission.WRITE_CALENDAR)
-    );
+            )
+            );
 
     private RadioGroup mRadioGroup;
 
@@ -51,6 +64,10 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permissions_reference_list);
+
+        if(savedInstanceState != null){
+            ScrapHeap.onRestoreInstanceState(savedInstanceState);
+        }
 
         mRecyclerView = (RecyclerView) findViewById(R.id.permissions_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,9 +79,14 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
         mAdapter = new PermissionsReferenceAdapter(permissionList);
         mRecyclerView.setAdapter(mAdapter);
 
-        mRadioGroup = (RadioGroup)findViewById(R.id.radio_group);
+        mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ScrapHeap.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -83,7 +105,7 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
 
                 } else {
 
-                    if(isDeniedForever(singleRequesteedPermission)){
+                    if (isDeniedForever(singleRequesteedPermission)) {
                         Log.v(TAG, "Permission was denied forever please grant in in Setting");
                         Toast.makeText(this, "Permission was denied forever please grant in in Setting", Toast.LENGTH_LONG).show();
                     } else {
@@ -113,7 +135,7 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
 
     @Override
     public boolean shouldCrash() {
-        switch (mRadioGroup.getCheckedRadioButtonId()){
+        switch (mRadioGroup.getCheckedRadioButtonId()) {
             case R.id.crash_check_button:
                 return true;
 
@@ -137,6 +159,6 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
     @Override
     public void requestPermissions(String permission) {
         Log.v(TAG, "requestPermissions, permission[" + permission + "]");
-        ActivityCompat.requestPermissions(this, new String[]{ permission }, REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{permission}, REQUEST_CODE);
     }
 }

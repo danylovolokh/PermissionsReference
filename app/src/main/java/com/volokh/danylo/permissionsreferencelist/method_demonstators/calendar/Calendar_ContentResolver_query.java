@@ -6,15 +6,13 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
-import com.volokh.danylo.permissionsreferencelist.method_demonstators.MethodDemonstrator;
-
 /**
  * Created by danylo.volokh on 4/8/16.
  *
  * This method {@link ContentResolver#query(Uri, String[], String, String[], String)}
  * is called when we need to get access to Calendar on the device
  */
-public class Calendar_ContentResolver_query extends MethodDemonstrator {
+public class Calendar_ContentResolver_query extends CalendarBaseDemonstrator {
 
     // Projection array. Creating indices for this array instead of doing
     // dynamic lookups improves performance.
@@ -33,7 +31,7 @@ public class Calendar_ContentResolver_query extends MethodDemonstrator {
     }
 
     @Override
-    public void callDangerousMethod() {
+    public boolean callDangerousMethod() {
         Log.v(TAG, ">> callDangerousMethod");
 
         // Run query
@@ -55,5 +53,6 @@ public class Calendar_ContentResolver_query extends MethodDemonstrator {
 
         Log.v(TAG, "<< callDangerousMethod");
 
+        return true;
     }
 }
