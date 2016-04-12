@@ -3,7 +3,6 @@ package com.volokh.danylo.permissionsreferencelist;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
-import android.os.PersistableBundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,10 +17,14 @@ import com.volokh.danylo.permissionsreferencelist.adapter.permission_items.Permi
 import com.volokh.danylo.permissionsreferencelist.adapter.PermissionsReferenceAdapter;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.MethodDemonstrator;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.ScrapHeap;
-import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_applyBatch;
-import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_insert;
-import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_query;
-import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentResolver_update;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_applyBatch;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_bulkInsert;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_canonicalize;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_delete;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_insert;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_query;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_uncanonicalize;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_update;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.Permission;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.PermissionGroup;
 import com.volokh.danylo.permissionsreferencelist.permissions.dangerous.DangerousPermissionGroup;
@@ -40,20 +43,36 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
     private PermissionsReferenceAdapter mAdapter;
 
     PermissionGroup CALENDAR = new DangerousPermissionGroup(Manifest.permission_group.CALENDAR,
-            new Permission(Manifest.permission.WRITE_CALENDAR),
             new Permission(Manifest.permission.READ_CALENDAR,
-
-                    new Calendar_ContentResolver_query(
+                    new Calendar_ContentProvider_query(
                             "ContentResolver#query(Uri, String[], String, String[], String)",
                             this),
-                    new Calendar_ContentResolver_insert(
+                    new Calendar_ContentProvider_canonicalize(
+                            "ContentResolver#canonicalize(Uri)",
+                            this),
+                    new Calendar_ContentProvider_uncanonicalize(
+                            "ContentResolver#uncanonicalize(Uri)",
+                            this)
+                    ),
+
+
+            new Permission(Manifest.permission.WRITE_CALENDAR,
+
+
+                    new Calendar_ContentProvider_insert(
                             "ContentResolver#insert(Uri url, ContentValues",
                             this),
-                    new Calendar_ContentResolver_update(
+                    new Calendar_ContentProvider_bulkInsert(
+                            "ContentResolver#bulkInsert(Uri url, ContentValues[]",
+                            this),
+                    new Calendar_ContentProvider_update(
                             "ContentResolver#update(Uri, ContentValues, String, String[])",
                             this),
-                    new Calendar_ContentResolver_applyBatch(
+                    new Calendar_ContentProvider_applyBatch(
                             "ContentResolver#applyBatch(String, ArrayList<ContentProviderOperation>)",
+                            this),
+                    new Calendar_ContentProvider_delete(
+                            "ContentResolver#delete(Uri)",
                             this)
             )
             );
@@ -101,13 +120,13 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    Toast.makeText(this, "You gave the permission. Hooray!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "You gave the permission. Hooray! Please do the action again", Toast.LENGTH_SHORT).show();
 
                 } else {
 
                     if (isDeniedForever(singleRequesteedPermission)) {
                         Log.v(TAG, "Permission was denied forever please grant in in Setting");
-                        Toast.makeText(this, "Permission was denied forever please grant in in Setting", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Permission was denied forever please grant in in Setting", Toast.LENGTH_SHORT).show();
                     } else {
 
                         // permission denied, boo! Disable the

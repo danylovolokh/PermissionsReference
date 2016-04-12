@@ -12,7 +12,7 @@ import android.util.Log;
  * This method {@link ContentResolver#query(Uri, String[], String, String[], String)}
  * is called when we need to get access to Calendar on the device
  */
-public class Calendar_ContentResolver_query extends CalendarBaseDemonstrator {
+public class Calendar_ContentProvider_query extends CalendarBaseDemonstrator {
 
     // Projection array. Creating indices for this array instead of doing
     // dynamic lookups improves performance.
@@ -24,9 +24,9 @@ public class Calendar_ContentResolver_query extends CalendarBaseDemonstrator {
             CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
     };
 
-    private static final String TAG = Calendar_ContentResolver_query.class.getSimpleName();
+    private static final String TAG = Calendar_ContentProvider_query.class.getSimpleName();
 
-    public Calendar_ContentResolver_query(String name, DemonstratorCallback demonstratorCallback) {
+    public Calendar_ContentProvider_query(String name, DemonstratorCallback demonstratorCallback) {
         super(name, demonstratorCallback);
     }
 

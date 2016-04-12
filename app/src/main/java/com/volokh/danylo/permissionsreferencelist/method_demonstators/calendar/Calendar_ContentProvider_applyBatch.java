@@ -1,27 +1,21 @@
 package com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar;
 
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.OperationApplicationException;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.CalendarContract;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.MethodDemonstrator;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.ScrapHeap;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * Created by danylo.volokh on 4/9/16.
  */
-public class Calendar_ContentResolver_applyBatch extends CalendarBaseDemonstrator {
+public class Calendar_ContentProvider_applyBatch extends CalendarBaseDemonstrator {
 
     // Projection array. Creating indices for this array instead of doing
     // dynamic lookups improves performance.
@@ -33,9 +27,9 @@ public class Calendar_ContentResolver_applyBatch extends CalendarBaseDemonstrato
             CalendarContract.Calendars.OWNER_ACCOUNT                  // 3
     };
 
-    private static final String TAG = Calendar_ContentResolver_query.class.getSimpleName();
+    private static final String TAG = Calendar_ContentProvider_query.class.getSimpleName();
 
-    public Calendar_ContentResolver_applyBatch(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
+    public Calendar_ContentProvider_applyBatch(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
         super(name, demonstratorCallback);
     }
 
@@ -48,7 +42,7 @@ public class Calendar_ContentResolver_applyBatch extends CalendarBaseDemonstrato
         // This is very bad approach, please avoid accessing static fields like I do here
         Uri eventUri = ScrapHeap.sInsertedCalendarEventUri;
         if(eventUri == null) {
-            callback().showToast("Please call insert first. There is nothing to do in applyBatch");
+            callback().showToast("Please call insert first and repeat the action");
             successful = false;
         } else {
             ArrayList<ContentProviderOperation> ops =

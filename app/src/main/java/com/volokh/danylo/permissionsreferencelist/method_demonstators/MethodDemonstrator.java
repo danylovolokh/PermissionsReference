@@ -116,7 +116,7 @@ public abstract class MethodDemonstrator extends MethodItem {
 
                 callback().showToast(
                         "Sorry, I cannot crash. " +
-                                "Permission is already granted.");
+                                "Permission is already granted. Please revoke permissions in Settings");
                 break;
             case PackageManager.PERMISSION_DENIED:
                 Log.v(TAG, "demonstrateCrash, PackageManager.PERMISSION_DENIED");

@@ -13,10 +13,10 @@ import java.util.Calendar;
 /**
  * Created by danylo.volokh on 4/9/16.
  */
-public class Calendar_ContentResolver_update extends CalendarBaseDemonstrator {
-    private static final String TAG = Calendar_ContentResolver_update.class.getSimpleName();
+public class Calendar_ContentProvider_update extends CalendarBaseDemonstrator {
+    private static final String TAG = Calendar_ContentProvider_update.class.getSimpleName();
 
-    public Calendar_ContentResolver_update(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
+    public Calendar_ContentProvider_update(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
         super(name, demonstratorCallback);
     }
 
@@ -40,10 +40,10 @@ public class Calendar_ContentResolver_update extends CalendarBaseDemonstrator {
         // This is very bad approach, please avoid accessing static fields like I do here
         Uri updateUri = ScrapHeap.sInsertedCalendarEventUri;
         if(updateUri == null) {
-            callback().showToast("Please call insert first. There is nothing to update");
+            callback().showToast("Please call insert first and repeat the action");
             successful = false;
         } else {
-            int rows = context().getContentResolver().update(updateUri, values, null, null);
+            context().getContentResolver().update(updateUri, values, null, null);
             successful = true;
         }
 

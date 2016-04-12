@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/name"
-    android:gravity="left|center_vertical"
-    android:padding="16dp"
+<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/method_background"
     android:layout_marginLeft="@dimen/method_item_left_margin"
-    tools:text="Sample"/>
+    card_view:cardCornerRadius="4dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:layout_marginRight="2dp">
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/name"
+        android:gravity="left|center_vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/method_background"
+        tools:text="Sample"/>
+
+</android.support.v7.widget.CardView>

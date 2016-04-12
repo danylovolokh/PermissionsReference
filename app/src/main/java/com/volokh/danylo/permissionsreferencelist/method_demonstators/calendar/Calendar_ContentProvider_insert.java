@@ -2,7 +2,6 @@ package com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
 import android.provider.CalendarContract;
 import android.util.Log;
 
@@ -16,11 +15,11 @@ import java.util.Calendar;
  *
  * Method insert allows us to insert items to Calendar on the device
  */
-public class Calendar_ContentResolver_insert extends CalendarBaseDemonstrator {
+public class Calendar_ContentProvider_insert extends CalendarBaseDemonstrator {
 
-    private static final String TAG = Calendar_ContentResolver_insert.class.getSimpleName();
+    private static final String TAG = Calendar_ContentProvider_insert.class.getSimpleName();
 
-    public Calendar_ContentResolver_insert(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
+    public Calendar_ContentProvider_insert(String name, MethodDemonstrator.DemonstratorCallback demonstratorCallback) {
         super(name, demonstratorCallback);
     }
 
