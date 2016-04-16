@@ -25,6 +25,8 @@ import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.C
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_query;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_uncanonicalize;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_update;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.camera.CameraManager_openCamera;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.camera.Camera_open;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.Permission;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.PermissionGroup;
 import com.volokh.danylo.permissionsreferencelist.permissions.dangerous.DangerousPermissionGroup;
@@ -75,7 +77,14 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
                             "ContentResolver#delete(Uri)",
                             this)
             )
-            );
+    );
+
+    PermissionGroup CAMERA = new DangerousPermissionGroup(Manifest.permission_group.CAMERA,
+            new Permission(Manifest.permission.CAMERA,
+                    new Camera_open("Camera#open(int)", this),
+                    new CameraManager_openCamera("CameraManager#openCamera(int)", this)
+            )
+    );
 
     private RadioGroup mRadioGroup;
 
@@ -91,9 +100,13 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
         mRecyclerView = (RecyclerView) findViewById(R.id.permissions_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        //TODO: refactor this. Create factory for these elements
         List<PermissionListItem> permissionList = new ArrayList<>();
         List<PermissionListItem> calendarPermissions = CALENDAR.getPermissionListItems();
         permissionList.addAll(calendarPermissions);
+
+        List<PermissionListItem> cameraPermissions = CAMERA.getPermissionListItems();
+        permissionList.addAll(cameraPermissions);
 
         mAdapter = new PermissionsReferenceAdapter(permissionList);
         mRecyclerView.setAdapter(mAdapter);
