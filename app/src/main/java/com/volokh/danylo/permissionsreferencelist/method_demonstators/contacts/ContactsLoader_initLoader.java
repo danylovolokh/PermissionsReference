@@ -10,10 +10,15 @@ import android.util.Log;
 
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.MethodDemonstrator;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Created by danylo.volokh on 4/16/16.
  */
 public class ContactsLoader_initLoader extends MethodDemonstrator{
+
+    private final AtomicBoolean mSync = new AtomicBoolean();
 
     private static final String[] PROJECTION = {
             ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
@@ -38,29 +43,83 @@ public class ContactsLoader_initLoader extends MethodDemonstrator{
 
     @Override
     public boolean callDangerousMethod() throws SecurityException {
+        Log.v(TAG, "callDangerousMethod");
 
-        callback().activity().getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Cursor>() {
-            @Override
-            public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                return new CursorLoader(
-                        callback().activity(),
-                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
-                        PROJECTION,
-                        SELECTION, new String[]{"%", "%", "%", "%"}, null
-                );
+        // this is just a wrapper
+        final AtomicReference<SecurityException> securityException = new AtomicReference<>();
 
+        synchronized (mSync){
+
+            callback().activity().getLoaderManager().initLoader(0, null, new LoaderManager.LoaderCallbacks<Cursor>() {
+                @Override
+                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                    Log.v(TAG, "onCreateLoader");
+
+                    return new CursorLoader(
+                            callback().activity(),
+                            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                            PROJECTION,
+                            SELECTION, new String[]{"%", "%", "%", "%"}, null
+                    ) {
+                        @Override
+                        protected Cursor onLoadInBackground() {
+                            Log.v(TAG, "onLoadInBackground");
+
+                            Cursor cursor = null;
+                            try {
+
+                                cursor = super.onLoadInBackground();
+
+                            } catch (final SecurityException e) {
+                                securityException.set(e);
+                            }
+
+                            synchronized (mSync){
+                                mSync.notify();
+                                // called notify
+                                mSync.set(true);
+                            }
+
+                            return cursor;
+                        }
+                    };
+
+                }
+
+                @Override
+                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                    Log.v(TAG, "onLoadFinished data, " + data);
+
+                    synchronized (mSync){
+                        mSync.notify();
+                        // called notify
+                        mSync.set(true);
+                    }
+
+                }
+
+                @Override
+                public void onLoaderReset(Loader<Cursor> loader) {
+
+                }
+            });
+
+            try {
+                if(!mSync.get()){
+                    // if notify not called then wait. Sometimes loader returns onLoadFinished synchronously
+                    mSync.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                Log.v(TAG, "onLoadFinished data, " + data);
+            // if we get exception - throw it
+            if(securityException.get() != null){
+                throw securityException.get();
             }
 
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader) {
+        }
 
-            }
-        });
-        return false;
+        return true;
     }
 }
