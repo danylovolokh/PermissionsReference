@@ -10,6 +10,7 @@ import android.os.Bundle;
 public class ScrapHeap {
 
     private static final String KEY_INSERTED_CALENDAR_EVENT_URI = "KEY_INSERTED_CALENDAR_EVENT_URI";
+    private static final String KEY_INSERTED_CONTACTS_EVENT_URI = "KEY_INSERTED_CONTACTS_EVENT_URI";
 
     /**
      *
@@ -25,12 +26,16 @@ public class ScrapHeap {
      * Result of the operation will be stored here
      */
     public static Uri sInsertedCalendarEventUri;
+    public static Uri sInsertedContactEventUri;
 
     public static void onSaveInstanceState(Bundle outState){
         outState.putParcelable(KEY_INSERTED_CALENDAR_EVENT_URI, sInsertedCalendarEventUri);
+        outState.putParcelable(KEY_INSERTED_CONTACTS_EVENT_URI, sInsertedContactEventUri);
+
     }
 
     public static void onRestoreInstanceState(Bundle savedState){
         sInsertedCalendarEventUri = savedState.getParcelable(KEY_INSERTED_CALENDAR_EVENT_URI);
+        sInsertedContactEventUri = savedState.getParcelable(KEY_INSERTED_CONTACTS_EVENT_URI);
     }
 }

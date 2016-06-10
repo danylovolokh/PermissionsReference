@@ -10,7 +10,9 @@
     <!-- android.permission-group.CAMERA -->
     <uses-permission android:name="android.permission.CAMERA" />
 
-
+    <!-- android.permission-group.CONTACTS -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
 
     <application
         android:icon="@mipmap/ic_launcher"

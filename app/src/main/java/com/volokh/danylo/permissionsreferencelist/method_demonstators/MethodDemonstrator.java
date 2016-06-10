@@ -68,7 +68,7 @@ public abstract class MethodDemonstrator extends MethodItem {
 
         switch (permissionCheck) {
             case PackageManager.PERMISSION_GRANTED:
-                Log.v(TAG, "demonstrate, PackageManager.PERMISSION_GRANTED");
+                Log.v(TAG, "demonstrateAskPermission, PackageManager.PERMISSION_GRANTED");
                 boolean successful = callDangerousMethod();
 
                 if(successful){
@@ -77,28 +77,9 @@ public abstract class MethodDemonstrator extends MethodItem {
 
                 break;
             case PackageManager.PERMISSION_DENIED:
-                Log.v(TAG, "demonstrate, PackageManager.PERMISSION_DENIED");
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(callback().activity(),
-                        Manifest.permission.READ_CONTACTS)) {
+                Log.v(TAG, "demonstrateAskPermission, PackageManager.PERMISSION_DENIED");
 
-                    callback().showToast("Could you please give us the permission ? :)");
-
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
-                    Log.v(TAG, "demonstrate, requestPermissions, mPermission[" + mPermission + "]");
-
-                    callback().requestPermissions(mPermission);
-
-                } else {
-                    Log.v(TAG, "demonstrate, No explanation needed, we can request the permission, mPermission[" + mPermission + "]");
-
-
-                    // No explanation needed, we can request the permission.
-
-                    callback().requestPermissions(mPermission);
-                }
+                callback().requestPermissions(mPermission);
 
                 break;
         }

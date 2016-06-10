@@ -27,6 +27,8 @@ import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.C
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.calendar.Calendar_ContentProvider_update;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.camera.CameraManager_openCamera;
 import com.volokh.danylo.permissionsreferencelist.method_demonstators.camera.Camera_open;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.contacts.ContactsLoader_initLoader;
+import com.volokh.danylo.permissionsreferencelist.method_demonstators.contacts.Contacts_ContentProvider_query;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.Permission;
 import com.volokh.danylo.permissionsreferencelist.permissions.base.PermissionGroup;
 import com.volokh.danylo.permissionsreferencelist.permissions.dangerous.DangerousPermissionGroup;
@@ -62,7 +64,7 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
 
 
                     new Calendar_ContentProvider_insert(
-                            "ContentResolver#insert(Uri url, ContentValues",
+                            "ContentResolver#insert(Uri url, ContentValues)",
                             this),
                     new Calendar_ContentProvider_bulkInsert(
                             "ContentResolver#bulkInsert(Uri url, ContentValues[]",
@@ -83,6 +85,17 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
             new Permission(Manifest.permission.CAMERA,
                     new Camera_open("Camera#open(int)", this),
                     new CameraManager_openCamera("CameraManager#openCamera(int)", this)
+            )
+    );
+
+    PermissionGroup CONTACTS = new DangerousPermissionGroup(Manifest.permission_group.CONTACTS,
+            new Permission(Manifest.permission.READ_CONTACTS,
+                    new Contacts_ContentProvider_query("ContentResolver#query(Uri, String[], String, String[], String)",
+                            this)
+            ),
+            new Permission(Manifest.permission.WRITE_CONTACTS,
+                    new ContactsLoader_initLoader("ContactsLoader#initLoader(Uri url, ContentValues)",
+                            this)
             )
     );
 
@@ -108,6 +121,9 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
         List<PermissionListItem> cameraPermissions = CAMERA.getPermissionListItems();
         permissionList.addAll(cameraPermissions);
 
+        List<PermissionListItem> contactsPermissions = CONTACTS.getPermissionListItems();
+        permissionList.addAll(contactsPermissions);
+
         mAdapter = new PermissionsReferenceAdapter(permissionList);
         mRecyclerView.setAdapter(mAdapter);
 
@@ -123,7 +139,10 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.v(TAG, "onRequestPermissionsResult, permissions " + Arrays.toString(permissions));
-        String singleRequesteedPermission = permissions[0];
+        Log.v(TAG, "onRequestPermissionsResult, grantResults " + Arrays.toString(grantResults));
+
+        String singleRequestedPermission = permissions[0];
+        Log.v(TAG, "onRequestPermissionsResult, singleRequestedPermission " + singleRequestedPermission);
 
         switch (requestCode) {
             case REQUEST_CODE: {
@@ -137,7 +156,7 @@ public class PermissionsReferenceListActivity extends AppCompatActivity implemen
 
                 } else {
 
-                    if (isDeniedForever(singleRequesteedPermission)) {
+                    if (isDeniedForever(singleRequestedPermission)) {
                         Log.v(TAG, "Permission was denied forever please grant in in Setting");
                         Toast.makeText(this, "Permission was denied forever please grant in in Setting", Toast.LENGTH_SHORT).show();
                     } else {
