@@ -38,3 +38,19 @@ You can choose two options:
 
 # The Origin
 We've recently had to implement support of Runtime Permission in my current project. Project is big (200K lines of Java code), and looking for every place where we need to implement requesting runtime permissions became real pain. Some of the places can be found by lint, but not all of them. For example using camera requires permisison but lin doesn't show it.
+
+# License
+
+Copyright 2016 Danylo Volokh
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
